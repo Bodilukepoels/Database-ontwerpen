@@ -1,0 +1,161 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema autoverhuur
+-- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `autoverhuur` ;
+
+-- -----------------------------------------------------
+-- Schema autoverhuur
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `autoverhuur` DEFAULT CHARACTER SET utf8 ;
+-- -----------------------------------------------------
+-- Schema world
+-- -----------------------------------------------------
+USE `autoverhuur` ;
+
+-- -----------------------------------------------------
+-- Table `autoverhuur`.`Prijzen`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `autoverhuur`.`Prijzen` ;
+
+CREATE TABLE IF NOT EXISTS `autoverhuur`.`Prijzen` (
+  `Merk` VARCHAR(45) NOT NULL,
+  `Type` VARCHAR(45) NOT NULL,
+  `PrijsPerDag` VARCHAR(45) NULL,
+  `PrijsPerDagDeel` VARCHAR(45) NULL,
+  `PrijsPerWeek` VARCHAR(45) NULL,
+  PRIMARY KEY (`Merk`, `Type`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `autoverhuur`.`Autos`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `autoverhuur`.`Autos` ;
+
+CREATE TABLE IF NOT EXISTS `autoverhuur`.`Autos` (
+  `Kenteken` INT NOT NULL,
+  `Merk` VARCHAR(45) NULL,
+  `Type` VARCHAR(45) NULL,
+  `DatumAPK` VARCHAR(45) NULL,
+  `Kilometerstand` VARCHAR(45) NULL,
+  `Prijzen_Merk` INT NOT NULL,
+  `Prijzen_Type` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Kenteken`),
+  INDEX `fk_Autos_Prijzen1_idx` (`Prijzen_Merk` ASC, `Prijzen_Type` ASC) VISIBLE,
+  CONSTRAINT `fk_Autos_Prijzen1`
+    FOREIGN KEY (`Prijzen_Merk` , `Prijzen_Type`)
+    REFERENCES `autoverhuur`.`Prijzen` (`Merk` , `Type`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `autoverhuur`.`Huurders`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `autoverhuur`.`Huurders` ;
+
+CREATE TABLE IF NOT EXISTS `autoverhuur`.`Huurders` (
+  `Huurdernr` INT NOT NULL,
+  `Naam` VARCHAR(45) NULL,
+  `Adres` VARCHAR(45) NULL,
+  `Postcode` VARCHAR(45) NULL,
+  `Plaats` VARCHAR(45) NULL,
+  PRIMARY KEY (`Huurdernr`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `autoverhuur`.`Verhuur`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `autoverhuur`.`Verhuur` ;
+
+CREATE TABLE IF NOT EXISTS `autoverhuur`.`Verhuur` (
+  `Kenteken` INT NOT NULL,
+  `DatumVerhuur` VARCHAR(45) NULL,
+  `Huurdernr` VARCHAR(45) NULL,
+  `Identificatie` VARCHAR(45) NULL,
+  `DatemRetour` VARCHAR(45) NULL,
+  `Huurders_Huurdernr` INT NOT NULL,
+  `Autos_Kenteken` INT NOT NULL,
+  PRIMARY KEY (`Kenteken`, `Autos_Kenteken`),
+  INDEX `fk_Verhuur_Huurders_idx` (`Huurders_Huurdernr` ASC) VISIBLE,
+  INDEX `fk_Verhuur_Autos1_idx` (`Autos_Kenteken` ASC) VISIBLE,
+  CONSTRAINT `fk_Verhuur_Huurders`
+    FOREIGN KEY (`Huurders_Huurdernr`)
+    REFERENCES `autoverhuur`.`Huurders` (`Huurdernr`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Verhuur_Autos1`
+    FOREIGN KEY (`Autos_Kenteken`)
+    REFERENCES `autoverhuur`.`Autos` (`Kenteken`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+-- -----------------------------------------------------
+-- Data for table `autoverhuur`.`Prijzen`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `autoverhuur`;
+INSERT INTO `autoverhuur`.`Prijzen` (`Merk`, `Type`, `PrijsPerDag`, `PrijsPerDagDeel`, `PrijsPerWeek`) VALUES ('Renault', 'ZOE', '20', '10', '120');
+INSERT INTO `autoverhuur`.`Prijzen` (`Merk`, `Type`, `PrijsPerDag`, `PrijsPerDagDeel`, `PrijsPerWeek`) VALUES ('Audi', 'R8', '40', '20', '250');
+INSERT INTO `autoverhuur`.`Prijzen` (`Merk`, `Type`, `PrijsPerDag`, `PrijsPerDagDeel`, `PrijsPerWeek`) VALUES ('BMW', '7 Series', '30', '15', '190');
+INSERT INTO `autoverhuur`.`Prijzen` (`Merk`, `Type`, `PrijsPerDag`, `PrijsPerDagDeel`, `PrijsPerWeek`) VALUES ('Audi', 'Q8', '30', '15', '180');
+INSERT INTO `autoverhuur`.`Prijzen` (`Merk`, `Type`, `PrijsPerDag`, `PrijsPerDagDeel`, `PrijsPerWeek`) VALUES ('Volkswagen', 'Polo', '15', '6', '105');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `autoverhuur`.`Autos`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `autoverhuur`;
+INSERT INTO `autoverhuur`.`Autos` (`Kenteken`, `Merk`, `Type`, `DatumAPK`, `Kilometerstand`, `Prijzen_Merk`, `Prijzen_Type`) VALUES (LZ-AK-69, 'Renault', 'ZOE', '2022-10-15', '3000 KM', DEFAULT, DEFAULT);
+INSERT INTO `autoverhuur`.`Autos` (`Kenteken`, `Merk`, `Type`, `DatumAPK`, `Kilometerstand`, `Prijzen_Merk`, `Prijzen_Type`) VALUES (EF-GA-15, 'Audi', 'R8', '2022-10-22', '20000 KM', DEFAULT, DEFAULT);
+INSERT INTO `autoverhuur`.`Autos` (`Kenteken`, `Merk`, `Type`, `DatumAPK`, `Kilometerstand`, `Prijzen_Merk`, `Prijzen_Type`) VALUES (KA-LE-22, 'BMW', '7 Series', '2022-10-9', '1500 KM', DEFAULT, DEFAULT);
+INSERT INTO `autoverhuur`.`Autos` (`Kenteken`, `Merk`, `Type`, `DatumAPK`, `Kilometerstand`, `Prijzen_Merk`, `Prijzen_Type`) VALUES (EE-AA-99, 'Audi', 'Q8', '2022-09-10', '80000 KM', DEFAULT, DEFAULT);
+INSERT INTO `autoverhuur`.`Autos` (`Kenteken`, `Merk`, `Type`, `DatumAPK`, `Kilometerstand`, `Prijzen_Merk`, `Prijzen_Type`) VALUES (AA-BB-45, 'Volkswagen', 'Polo', '2022-10-10', '6000 KM', DEFAULT, DEFAULT);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `autoverhuur`.`Huurders`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `autoverhuur`;
+INSERT INTO `autoverhuur`.`Huurders` (`Huurdernr`, `Naam`, `Adres`, `Postcode`, `Plaats`) VALUES (1, 'Piet', 'Claude Debussystraat 15', '2342KK', 'Almere');
+INSERT INTO `autoverhuur`.`Huurders` (`Huurdernr`, `Naam`, `Adres`, `Postcode`, `Plaats`) VALUES (2, 'Jan', 'Janstraat 19', '1333TT', 'Almere');
+INSERT INTO `autoverhuur`.`Huurders` (`Huurdernr`, `Naam`, `Adres`, `Postcode`, `Plaats`) VALUES (3, 'Sky', 'Skystraat 16', '1345CB', 'Zeewolde');
+INSERT INTO `autoverhuur`.`Huurders` (`Huurdernr`, `Naam`, `Adres`, `Postcode`, `Plaats`) VALUES (4, 'Nander', 'IBSstraat 14', '1111FC', 'Lelystad');
+INSERT INTO `autoverhuur`.`Huurders` (`Huurdernr`, `Naam`, `Adres`, `Postcode`, `Plaats`) VALUES (5, 'Youri', 'Youristraat 19', '1323KL', 'Almere');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `autoverhuur`.`Verhuur`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `autoverhuur`;
+INSERT INTO `autoverhuur`.`Verhuur` (`Kenteken`, `DatumVerhuur`, `Huurdernr`, `Identificatie`, `DatemRetour`, `Huurders_Huurdernr`, `Autos_Kenteken`) VALUES (LZ-AK-69, '2022-10-10', '1', 'SPECI2014', '2022-10-27', DEFAULT, DEFAULT);
+INSERT INTO `autoverhuur`.`Verhuur` (`Kenteken`, `DatumVerhuur`, `Huurdernr`, `Identificatie`, `DatemRetour`, `Huurders_Huurdernr`, `Autos_Kenteken`) VALUES (EF-GA-15, '2022-10-10', '2', 'BAKIS2012', '2022-10-22', DEFAULT, DEFAULT);
+INSERT INTO `autoverhuur`.`Verhuur` (`Kenteken`, `DatumVerhuur`, `Huurdernr`, `Identificatie`, `DatemRetour`, `Huurders_Huurdernr`, `Autos_Kenteken`) VALUES (KA-LE-22, '2022-10-10', '3', 'GERIN2016', '2022-10-26', DEFAULT, DEFAULT);
+INSERT INTO `autoverhuur`.`Verhuur` (`Kenteken`, `DatumVerhuur`, `Huurdernr`, `Identificatie`, `DatemRetour`, `Huurders_Huurdernr`, `Autos_Kenteken`) VALUES (EE-AA-99, '2022-10-10', '4', 'LALAS2011', '2022-10-24', DEFAULT, DEFAULT);
+INSERT INTO `autoverhuur`.`Verhuur` (`Kenteken`, `DatumVerhuur`, `Huurdernr`, `Identificatie`, `DatemRetour`, `Huurders_Huurdernr`, `Autos_Kenteken`) VALUES (AA-BB-45, '2022-10-10', '5', 'PEBIS2013', '2022-10-20', DEFAULT, DEFAULT);
+
+COMMIT;
+
