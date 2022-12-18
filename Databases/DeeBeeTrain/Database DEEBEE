@@ -1,0 +1,127 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema DeeBeeTrain
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema DeeBeeTrain
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `DeeBeeTrain` DEFAULT CHARACTER SET utf8 ;
+USE `DeeBeeTrain` ;
+
+-- -----------------------------------------------------
+-- Table `DeeBeeTrain`.`table1`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DeeBeeTrain`.`table1` (
+)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DeeBeeTrain`.`Medewerker`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DeeBeeTrain`.`Medewerker` (
+  `idMedewerker` INT NOT NULL,
+  `Voornaam` VARCHAR(45) NULL,
+  `Tussenvoegsel(s)` VARCHAR(45) NULL,
+  `Achternaam` VARCHAR(45) NULL,
+  `Afdeling_idAfdeling` INT NOT NULL,
+  PRIMARY KEY (`idMedewerker`),
+  CONSTRAINT `fk_Medewerker_Afdeling1`
+    FOREIGN KEY (`Afdeling_idAfdeling`)
+    REFERENCES `DeeBeeTrain`.`Afdeling` (`idAfdeling`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE INDEX `fk_Medewerker_Afdeling1_idx` ON `DeeBeeTrain`.`Medewerker` (`Afdeling_idAfdeling` ASC) VISIBLE;
+
+
+-- -----------------------------------------------------
+-- Table `DeeBeeTrain`.`Afdeling`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DeeBeeTrain`.`Afdeling` (
+  `idAfdeling` INT NOT NULL,
+  `Omschrijving` VARCHAR(45) NULL,
+  `Hoofd` VARCHAR(45) NULL,
+  `Medewerker_idMedewerker` INT NOT NULL,
+  PRIMARY KEY (`idAfdeling`),
+  CONSTRAINT `fk_Afdeling_Medewerker`
+    FOREIGN KEY (`Medewerker_idMedewerker`)
+    REFERENCES `DeeBeeTrain`.`Medewerker` (`idMedewerker`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE INDEX `fk_Afdeling_Medewerker_idx` ON `DeeBeeTrain`.`Afdeling` (`Medewerker_idMedewerker` ASC) VISIBLE;
+
+
+-- -----------------------------------------------------
+-- Table `DeeBeeTrain`.`Cursus`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DeeBeeTrain`.`Cursus` (
+  `idCursus` INT NOT NULL,
+  `Omschrijving` VARCHAR(45) NULL,
+  PRIMARY KEY (`idCursus`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DeeBeeTrain`.`Uitvoering`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DeeBeeTrain`.`Uitvoering` (
+  `idUitvoering` INT NOT NULL,
+  `Datum` DATE NULL,
+  `Medewerker_idMedewerker` INT NOT NULL,
+  `Cursus_idCursus` INT NOT NULL,
+  PRIMARY KEY (`idUitvoering`),
+  CONSTRAINT `fk_Uitvoering_Medewerker1`
+    FOREIGN KEY (`Medewerker_idMedewerker`)
+    REFERENCES `DeeBeeTrain`.`Medewerker` (`idMedewerker`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Uitvoering_Cursus1`
+    FOREIGN KEY (`Cursus_idCursus`)
+    REFERENCES `DeeBeeTrain`.`Cursus` (`idCursus`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE INDEX `fk_Uitvoering_Medewerker1_idx` ON `DeeBeeTrain`.`Uitvoering` (`Medewerker_idMedewerker` ASC) VISIBLE;
+
+CREATE INDEX `fk_Uitvoering_Cursus1_idx` ON `DeeBeeTrain`.`Uitvoering` (`Cursus_idCursus` ASC) VISIBLE;
+
+
+-- -----------------------------------------------------
+-- Table `DeeBeeTrain`.`Medewerker_has_Uitvoering`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DeeBeeTrain`.`Medewerker_has_Uitvoering` (
+  `Medewerker_idMedewerker` INT NOT NULL,
+  `Uitvoering_idUitvoering` INT NOT NULL,
+  `Evaluatie` VARCHAR(45) NULL,
+  PRIMARY KEY (`Medewerker_idMedewerker`, `Uitvoering_idUitvoering`),
+  CONSTRAINT `fk_Medewerker_has_Uitvoering_Medewerker1`
+    FOREIGN KEY (`Medewerker_idMedewerker`)
+    REFERENCES `DeeBeeTrain`.`Medewerker` (`idMedewerker`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Medewerker_has_Uitvoering_Uitvoering1`
+    FOREIGN KEY (`Uitvoering_idUitvoering`)
+    REFERENCES `DeeBeeTrain`.`Uitvoering` (`idUitvoering`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE INDEX `fk_Medewerker_has_Uitvoering_Uitvoering1_idx` ON `DeeBeeTrain`.`Medewerker_has_Uitvoering` (`Uitvoering_idUitvoering` ASC) VISIBLE;
+
+CREATE INDEX `fk_Medewerker_has_Uitvoering_Medewerker1_idx` ON `DeeBeeTrain`.`Medewerker_has_Uitvoering` (`Medewerker_idMedewerker` ASC) VISIBLE;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
