@@ -1,0 +1,143 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `mydb` ;
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Winkel`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`Winkel` ;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Winkel` (
+  `idWinkel` INT NOT NULL,
+  `Winkeladres` VARCHAR(45) NULL,
+  `Winkelpostcode` VARCHAR(45) NULL,
+  `Winkelplaats` VARCHAR(45) NULL,
+  `Winkeltelefoon` VARCHAR(45) NULL,
+  `Winkelemail` VARCHAR(45) NULL,
+  PRIMARY KEY (`idWinkel`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Medewerker`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`Medewerker` ;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Medewerker` (
+  `idMedewerker` INT NOT NULL,
+  `Voornaam` VARCHAR(45) NULL,
+  `Tussenvoegsel(s)` VARCHAR(45) NULL,
+  `Achternaam` VARCHAR(45) NULL,
+  PRIMARY KEY (`idMedewerker`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Klant`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`Klant` ;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Klant` (
+  `idKlant` INT NOT NULL,
+  `Voornaam` VARCHAR(45) NULL,
+  `Tussenvoegsel(s)` VARCHAR(45) NULL,
+  `Achternaam` VARCHAR(45) NULL,
+  `Adres` VARCHAR(45) NULL,
+  `Huisnr` VARCHAR(45) NULL,
+  `Postcode` VARCHAR(45) NULL,
+  `Plaats` VARCHAR(45) NULL,
+  `Email` VARCHAR(45) NULL,
+  `Telefoon` VARCHAR(45) NULL,
+  PRIMARY KEY (`idKlant`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Artikel`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`Artikel` ;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Artikel` (
+  `idArtikel` INT NOT NULL,
+  `Omschrijving` VARCHAR(45) NULL,
+  `Prijs` VARCHAR(45) NULL,
+  PRIMARY KEY (`idArtikel`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Factuur`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`Factuur` ;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Factuur` (
+  `idFactuur` INT NOT NULL,
+  `Datum` DATE NULL,
+  `Factuurcol` VARCHAR(45) NULL,
+  `afgehaald` TINYINT NOT NULL,
+  `Winkel_idWinkel` INT NOT NULL,
+  `Medewerker_idMedewerker` INT NOT NULL,
+  `Klant_idKlant` INT NOT NULL,
+  PRIMARY KEY (`idFactuur`),
+  INDEX `fk_Factuur_Winkel_idx` (`Winkel_idWinkel` ASC) VISIBLE,
+  INDEX `fk_Factuur_Medewerker1_idx` (`Medewerker_idMedewerker` ASC) VISIBLE,
+  INDEX `fk_Factuur_Klant1_idx` (`Klant_idKlant` ASC) VISIBLE,
+  CONSTRAINT `fk_Factuur_Winkel`
+    FOREIGN KEY (`Winkel_idWinkel`)
+    REFERENCES `mydb`.`Winkel` (`idWinkel`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Factuur_Medewerker1`
+    FOREIGN KEY (`Medewerker_idMedewerker`)
+    REFERENCES `mydb`.`Medewerker` (`idMedewerker`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Factuur_Klant1`
+    FOREIGN KEY (`Klant_idKlant`)
+    REFERENCES `mydb`.`Klant` (`idKlant`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Factuur_has_Artikel`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`Factuur_has_Artikel` ;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Factuur_has_Artikel` (
+  `Factuur_idFactuur` INT NOT NULL,
+  `Artikel_idArtikel` INT NOT NULL,
+  `Aantal` INT NULL,
+  PRIMARY KEY (`Factuur_idFactuur`, `Artikel_idArtikel`),
+  INDEX `fk_Factuur_has_Artikel_Artikel1_idx` (`Artikel_idArtikel` ASC) VISIBLE,
+  INDEX `fk_Factuur_has_Artikel_Factuur1_idx` (`Factuur_idFactuur` ASC) VISIBLE,
+  CONSTRAINT `fk_Factuur_has_Artikel_Factuur1`
+    FOREIGN KEY (`Factuur_idFactuur`)
+    REFERENCES `mydb`.`Factuur` (`idFactuur`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Factuur_has_Artikel_Artikel1`
+    FOREIGN KEY (`Artikel_idArtikel`)
+    REFERENCES `mydb`.`Artikel` (`idArtikel`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
